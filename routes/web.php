@@ -96,16 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'index'])
         ->name('reviews.index');
 
-    Route::get('/reviews/create', [ReviewController::class, 'create'])
-        ->middleware('role:user')
-        ->name('reviews.create');
-
-    Route::post('/reviews', [ReviewController::class, 'store'])
-        ->middleware('role:user')
-        ->name('reviews.store');
-
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
-        ->middleware('auth')
         ->name('reviews.destroy');
 });
 

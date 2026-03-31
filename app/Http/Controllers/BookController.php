@@ -35,6 +35,11 @@ class BookController extends Controller
 
         return view('book.index', compact('books'));
     }
+    // Admin view - sama dengan index tapi bisa dikembangkan
+    public function adminIndex(Request $request)
+    {
+        return $this->index($request);
+    }
 
     public function show($id)
     {
@@ -63,12 +68,12 @@ $book = Book::with('kategori', 'reviews.user')
             'kategori_id' => 'required',
             'isbn' => 'required|unique:books,isbn',
             'penerbit' => 'required',
-            'tahun_terbit' => 'required|digits:4|integer',
+            'tahun_terbit' => 'required|integer|min:1000|max:' . date('Y'),
             'stok' => 'required|integer|min:0',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['judul', 'penulis', 'kategori_id', 'isbn', 'penerbit', 'tahun_terbit', 'stok']);
 
         if ($request->hasFile('cover')) {
             $file = $request->file('cover');
@@ -79,7 +84,7 @@ $book = Book::with('kategori', 'reviews.user')
 
         Book::create($data);
 
-        return redirect()->route('books.index')
+        return redirect()->route('admin.books.index')
                          ->with('success', 'Buku berhasil ditambahkan');
     }
 
@@ -101,12 +106,12 @@ $book = Book::with('kategori', 'reviews.user')
             'kategori_id' => 'required',
             'isbn' => 'required|unique:books,isbn,' . $book->id,
             'penerbit' => 'required',
-            'tahun_terbit' => 'required|digits:4|integer',
+            'tahun_terbit' => 'required|integer|min:1000|max:' . date('Y'),
             'stok' => 'required|integer|min:0',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['judul', 'penulis', 'kategori_id', 'isbn', 'penerbit', 'tahun_terbit', 'stok']);
 
         if ($request->hasFile('cover')) {
 
@@ -125,7 +130,7 @@ $book = Book::with('kategori', 'reviews.user')
 
         $book->update($data);
 
-        return redirect()->route('books.index')
+        return redirect()->route('admin.books.index')
                          ->with('success', 'Buku berhasil diupdate');
     }
 
